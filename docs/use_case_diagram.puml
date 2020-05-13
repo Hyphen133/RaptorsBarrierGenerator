@@ -1,0 +1,10 @@
+@startuml
+left to right direction
+
+RaptorsBarrierGenerator as RaptorsBarrierGenerator
+User -- (Generate Barriers)
+
+RaptorsBarrierGenerator -- (Generate Barriers)
+RaptorsBarrierGenerator -- (Load Map)
+(Load Map) -- RaptorsDatabase
+@enduml
