@@ -20,6 +20,6 @@ class MapProcessing():
 
         return image
 
-    def show_image(image):
-        plt.imshow(image)
+    def show_image(self,image, cmap='gray'):
+        plt.imshow(image, cmap=cmap)
         plt.show()

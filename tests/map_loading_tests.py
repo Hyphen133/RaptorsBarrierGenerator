@@ -1,13 +1,6 @@
-import os
-from unittest import TestCase
-
-from PIL import Image
-from PIL.ImageFile import ImageFile
-
 from src.map_processing.database_config import DatabaseConfig
 from src.map_processing.map_loading import MapLoader, FilePathMapLoader
-from tests.test_base import Assertions, TestBase
-from tests.resource_loader import ResourceLoader
+from tests.test_base import TestBase
 
 
 class MapLoadingTests(TestBase):
@@ -21,10 +14,11 @@ class MapLoadingTests(TestBase):
 
         #then
         self.is_PIL_Image(map)
+        self.is_image_grayscale(map)
 
     def test_filepath_map_loader(self):
         # given
-        filepath = ResourceLoader.get_test_map_filepath('apartment.pgm')
+        filepath = self.resource_loader.get_test_map_filepath('apartment.pgm')
         map_processing = FilePathMapLoader(filepath)
 
         # when
@@ -32,3 +26,4 @@ class MapLoadingTests(TestBase):
 
         # then
         self.is_PIL_Image(map)
+        self.is_image_grayscale(map)

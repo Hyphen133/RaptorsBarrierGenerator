@@ -16,4 +16,4 @@ class FilePathMapLoader():
         self.filepath = filepath
 
     def load_image(self):
-        return Image.open(self.filepath).convert('LA')
+        return Image.open(self.filepath).convert('L')
