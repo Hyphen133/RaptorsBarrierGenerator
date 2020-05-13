@@ -1,7 +1,5 @@
 from PIL import Image
 
-from src.map_processing.database_config import DatabaseConfig
-
 
 class MapLoader():
     def __init__(self,database_config) -> None:
@@ -18,4 +16,4 @@ class FilePathMapLoader():
         self.filepath = filepath
 
     def load_image(self):
-        return Image.open(self.filepath)
+        return Image.open(self.filepath).convert('LA')

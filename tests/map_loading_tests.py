@@ -6,10 +6,11 @@ from PIL.ImageFile import ImageFile
 
 from src.map_processing.database_config import DatabaseConfig
 from src.map_processing.map_loading import MapLoader, FilePathMapLoader
+from tests.test_base import Assertions, TestBase
 from tests.resource_loader import ResourceLoader
 
 
-class MapLoadingTests(TestCase):
+class MapLoadingTests(TestBase):
     def test_database_integration(self):
         #given
         database_config = DatabaseConfig()
@@ -20,9 +21,6 @@ class MapLoadingTests(TestCase):
 
         #then
         self.is_PIL_Image(map)
-
-    def is_PIL_Image(self, image):
-        self.assertTrue(isinstance(image, Image.Image))
 
     def test_filepath_map_loader(self):
         # given
