@@ -8,9 +8,8 @@ class BoundaryExtractor:
     def extract_boundary_geometries(self, image):
         return self.extract_polygon_geometries_from_img(image)
 
-    def extract_polygon_geometries_from_img(img, coutours_level=0.01, poly_simplification_level=20.0):
-        gray = color.colorconv.rgb2grey(img)
-        contours = measure.find_contours(gray, coutours_level)
+    def extract_polygon_geometries_from_img(self,img, coutours_level=0.01, poly_simplification_level=20.0):
+        contours = measure.find_contours(img, coutours_level)
 
         geometries = []
         for geometry_index in range(int(len(contours) / 2)):

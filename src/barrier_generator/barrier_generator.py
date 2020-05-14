@@ -1,7 +1,7 @@
 from shapely.geometry import LineString, Point
 
 from src.barrier_generator.min_distance_utils import get_min_distance_pair_points, convert_line_to_formula, \
-    calculate_delta_x, line_contains_point, Direction
+    calculate_delta_x, line_contains_point, Direction, get_intersection_points
 
 
 class BarrierGenerator():
@@ -21,9 +21,11 @@ class BarrierGenerator():
 
         return external_boundary_geometry, internal_object_geometries
 
+
     def create_additional_lines_shorter_than_threshold(self,external_boundary_geometry, internal_objects_geometries,
                                                        length_threshold):
 
+        # Extracting all lines that are that repserent inner line of external boundary and outer lines of internal objects
         all_lines = []
         all_lines.extend(self.divide_polygon_into_set_of_lines(external_boundary_geometry.get_internal_boundary()))
         for internal_object_geometry in internal_objects_geometries:
@@ -35,29 +37,29 @@ class BarrierGenerator():
                 if line1 == line2:
                     break
 
-                # If lines interset get_min_distance_pair_points throws AssertionError
-                # Drawing lines
+                # If lines already interset get_min_distance_pair_points throws AssertionError
                 try:
                     x, y, distance = get_min_distance_pair_points(line1, line2)
                 except AssertionError:
                     distance = 0
 
                 if distance < length_threshold:
-                    # new_lines.append(LineString([x, y]))
-                    x1, y1 = self.return_points_on_lines_with_distance_closest_to_target_when_moving_both_points(line1,
+                    #There are 2 cases we can move to left/right from min distance point
+                    #TODO -> fix point line generation on edges
+                    point_left_1, point_left_2 = self.return_points_on_lines_with_distance_closest_to_target_when_moving_both_points(line1,
                                                                                                             line2,
                                                                                                             length_threshold,
                                                                                                             Direction.LEFT)
-                    x2, y2 = self.return_points_on_lines_with_distance_closest_to_target_when_moving_both_points(line1,
+                    point_right_1, point_right_2 = self.return_points_on_lines_with_distance_closest_to_target_when_moving_both_points(line1,
                                                                                                             line2,
                                                                                                             length_threshold,
                                                                                                             Direction.RIGHT)
-                    new_lines.append(LineString([x1, y1]))
-                    new_lines.append(LineString([x2, y2]))
+                    new_lines.append(LineString([point_left_1, point_left_2]))
+                    new_lines.append(LineString([point_right_1, point_right_2]))
 
         return new_lines
 
-    def divide_polygon_into_set_of_lines(polygon):
+    def divide_polygon_into_set_of_lines(self,polygon):
         return [LineString([polygon.boundary.coords[i], polygon.boundary.coords[i + 1]]) for i in
                 range(len(polygon.boundary.coords) - 1)]
 
@@ -67,14 +69,7 @@ class BarrierGenerator():
         line1_formula = convert_line_to_formula(line1)
         line2_formula = convert_line_to_formula(line2)
 
-        try:
-            current_point_on_line1, current_point_on_line2, current_distance = get_min_distance_pair_points(line1,
-                                                                                                            line2)
-        except AssertionError:
-            current_distance = 0
-            intersection_point = line1.intersection(line2)
-            current_point_on_line1 = intersection_point.bounds[0:2]
-            current_point_on_line2 = intersection_point.bounds[2:]
+        current_point_on_line1, current_point_on_line2, current_distance = self.get_minimum_distance_points_for_lines(line1, line2)
 
         is_line1_point_on_edge = False
         is_line2_point_on_edge = False
@@ -103,3 +98,12 @@ class BarrierGenerator():
 
         return current_point_on_line1, current_point_on_line2
 
+    def get_minimum_distance_points_for_lines(self, line1, line2):
+        try:
+            current_point_on_line1, current_point_on_line2, current_distance = get_min_distance_pair_points(line1,
+                                                                                                       line2)
+        except AssertionError:
+            current_distance = 0
+            current_point_on_line1,  current_point_on_line2 = get_intersection_points(line1,line2)
+
+        return current_point_on_line1, current_point_on_line2, current_distance

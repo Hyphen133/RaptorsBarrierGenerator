@@ -180,3 +180,10 @@ def convert_line_to_formula(line):
 
 def calculate_delta_x(line_formula, delta_y):
     return delta_y / (line_formula(1)-line_formula(0))
+
+def get_intersection_points(line1, line2):
+    intersection_point = line1.intersection(line2)
+    current_point_on_line1 = intersection_point.bounds[0:2]
+    current_point_on_line2 = intersection_point.bounds[2:]
+
+    return current_point_on_line1, current_point_on_line2
