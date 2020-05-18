@@ -6,6 +6,7 @@ from src.barrier_generator.robot_config import RobotConfig
 from tests.test_base import TestBase
 
 import numpy as np
+import matplotlib.pyplot as plt
 
 class BarrierGenerationTests(TestBase):
     def test_generate_additional_lines(self):
@@ -16,15 +17,9 @@ class BarrierGenerationTests(TestBase):
         robot_config = RobotConfig(line_threshold)
         barrier_generator = BarrierGenerator(robot_config)
 
-
-
         # when
-        barrier_generator.generate_barrier_boundaries(boundary_extractor.extract_boundary_geometries(img))
+        image = barrier_generator.generate_barrier_boundaries(boundary_extractor.extract_boundary_geometries(img),img)
 
         # then
-        # show_geometry(external_boundary_geometry, show=False)
-        # for geometry in internal_object_geometries:
-        #     show_geometry(geometry, show=False)
-        # for line in new_lines:
-        #     show_line(line, show=False)
-        # plt.show()
+        image.show()
+        self.assertEqual(img.shape[:2], np.array(image).shape[:2])

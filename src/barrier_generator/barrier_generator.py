@@ -1,3 +1,5 @@
+import numpy as np
+from PIL import Image, ImageDraw
 from shapely.geometry import LineString, Point
 
 from src.barrier_generator.min_distance_utils import get_min_distance_pair_points, convert_line_to_formula, \
@@ -9,9 +11,13 @@ class BarrierGenerator():
         super().__init__()
         self.robot_config = robot_config
 
-    def generate_barrier_boundaries(self, geometries_list):
+    def generate_barrier_boundaries(self, geometries_list, img):
+        empty_image = Image.fromarray(np.uint8(np.zeros((img.shape[0],img.shape[1],3))))
         external_boundary_geometry, internal_object_geometries = self.extract_internal_and_external_boundaries(geometries_list)
         new_lines = self.create_additional_lines_shorter_than_threshold(external_boundary_geometry, internal_object_geometries, self.robot_config.get_diameter())
+
+        return self.draw_boundaries(empty_image, external_boundary_geometry, internal_object_geometries, new_lines)
+        # return self.get_image_with_boundaries_and_lines(external_boundary_geometry,internal_object_geometries, new_lines)
 
     def extract_internal_and_external_boundaries(self, geometries):
         external_boundary_geometry = geometries[0]
@@ -107,3 +113,19 @@ class BarrierGenerator():
             current_point_on_line1,  current_point_on_line2 = get_intersection_points(line1,line2)
 
         return current_point_on_line1, current_point_on_line2, current_distance
+
+
+    def draw_boundaries(self, empty_image, external_boundary_geometry, internal_object_geometries, new_lines):
+        draw = ImageDraw.Draw(empty_image)
+        y,x = external_boundary_geometry.get_internal_boundary().exterior.coords.xy
+        draw.polygon(list(zip(x,y)), outline='wheat')
+
+        for internal_object_geometry in internal_object_geometries:
+            y, x = internal_object_geometry.get_external_boundary().exterior.coords.xy
+            draw.polygon(list(zip(x, y)), outline='green')
+
+        for line in new_lines:
+            y,x = line.coords.xy
+            draw.line(list(zip(x,y)), fill='orange')
+
+        return empty_image

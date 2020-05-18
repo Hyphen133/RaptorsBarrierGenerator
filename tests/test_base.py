@@ -4,6 +4,7 @@ from PIL.Image import Image
 
 from tests.resource_loader import ResourceLoader
 import numpy as np
+import matplotlib.pyplot as plt
 
 class TestBase(TestCase):
 
