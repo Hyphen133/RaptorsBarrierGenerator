@@ -1,5 +1,5 @@
 from PIL import Image
-
+import numpy as np
 
 class MapLoader():
     def __init__(self,database_config) -> None:

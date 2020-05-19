@@ -167,7 +167,8 @@ def get_line_edge_point(line, direction):
 def line_contains_point(line, point):
     return line.distance(point) < 1e-8
 
-def convert_line_to_formula(line):
+
+def convert_line_to_coefficients(line):
     x1, y1, x2, y2 = line.bounds
 
     #Hack for vertical lines
@@ -176,6 +177,10 @@ def convert_line_to_formula(line):
 
     a = (y2 - y1) / (x2 - x1)
     b = y1 - a * x1
+    return a,b
+
+def convert_line_to_formula(line):
+    a,b = convert_line_to_coefficients(line)
     return lambda x: a * x + b
 
 def calculate_delta_x(line_formula, delta_y):

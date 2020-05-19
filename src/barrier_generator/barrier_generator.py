@@ -1,9 +1,11 @@
+import math
+
 import numpy as np
 from PIL import Image, ImageDraw
 from shapely.geometry import LineString, Point
 
 from src.barrier_generator.min_distance_utils import get_min_distance_pair_points, convert_line_to_formula, \
-    calculate_delta_x, line_contains_point, Direction, get_intersection_points
+    calculate_delta_x, line_contains_point, Direction, get_intersection_points, convert_line_to_coefficients
 
 
 class BarrierGenerator():
@@ -12,12 +14,11 @@ class BarrierGenerator():
         self.robot_config = robot_config
 
     def generate_barrier_boundaries(self, geometries_list, img):
-        empty_image = Image.fromarray(np.uint8(np.zeros((img.shape[0],img.shape[1],3))))
+        empty_image = Image.fromarray(np.uint8(np.ones((img.shape[0],img.shape[1],3)))*255)
         external_boundary_geometry, internal_object_geometries = self.extract_internal_and_external_boundaries(geometries_list)
         new_lines = self.create_additional_lines_shorter_than_threshold(external_boundary_geometry, internal_object_geometries, self.robot_config.get_diameter())
 
         return self.draw_boundaries(empty_image, external_boundary_geometry, internal_object_geometries, new_lines)
-        # return self.get_image_with_boundaries_and_lines(external_boundary_geometry,internal_object_geometries, new_lines)
 
     def extract_internal_and_external_boundaries(self, geometries):
         external_boundary_geometry = geometries[0]
@@ -71,9 +72,9 @@ class BarrierGenerator():
 
     def return_points_on_lines_with_distance_closest_to_target_when_moving_both_points(self, line1, line2,
                                                                                        target_distance, direction,
-                                                                                       delta_y=1):
-        line1_formula = convert_line_to_formula(line1)
-        line2_formula = convert_line_to_formula(line2)
+                                                                                       delta=1):
+        a1,b1 = convert_line_to_coefficients(line1)
+        a2,b2 = convert_line_to_coefficients(line1)
 
         current_point_on_line1, current_point_on_line2, current_distance = self.get_minimum_distance_points_for_lines(line1, line2)
 
@@ -82,13 +83,8 @@ class BarrierGenerator():
 
         while not (is_line1_point_on_edge and is_line2_point_on_edge) and current_distance < target_distance:
             # Update points
-            new_line_point_x1 = current_point_on_line1[0] + direction.value * calculate_delta_x(line1_formula, delta_y)
-            new_line_point_x2 = current_point_on_line2[0] + direction.value * calculate_delta_x(line2_formula, delta_y)
-
-            # if not is_line1_point_on_edge:
-            new_candidate_point_on_line1 = (new_line_point_x1, line1_formula(new_line_point_x1))
-            # if not is_line2_point_on_edge:
-            new_candidate_point_on_line2 = (new_line_point_x2, line2_formula(new_line_point_x2))
+            new_candidate_point_on_line1 = (current_point_on_line1[0] + math.sqrt(delta)/(1+a1**2) , current_point_on_line1[1] + math.sqrt(delta)/(1+1/(a1**2)))
+            new_candidate_point_on_line2 = (current_point_on_line2[0] + math.sqrt(delta)/(1+a2**2) , current_point_on_line2[1] + math.sqrt(delta)/(1+1/(a2**2)))
 
             if line_contains_point(line1, Point(new_candidate_point_on_line1)):
                 current_point_on_line1 = new_candidate_point_on_line1
@@ -118,14 +114,14 @@ class BarrierGenerator():
     def draw_boundaries(self, empty_image, external_boundary_geometry, internal_object_geometries, new_lines):
         draw = ImageDraw.Draw(empty_image)
         y,x = external_boundary_geometry.get_internal_boundary().exterior.coords.xy
-        draw.polygon(list(zip(x,y)), outline='wheat')
+        draw.polygon(list(zip(x,y)), outline='black')
 
         for internal_object_geometry in internal_object_geometries:
             y, x = internal_object_geometry.get_external_boundary().exterior.coords.xy
-            draw.polygon(list(zip(x, y)), outline='green')
+            draw.polygon(list(zip(x, y)), outline='black')
 
         for line in new_lines:
             y,x = line.coords.xy
-            draw.line(list(zip(x,y)), fill='orange')
+            draw.line(list(zip(x,y)), fill='black')
 
         return empty_image
