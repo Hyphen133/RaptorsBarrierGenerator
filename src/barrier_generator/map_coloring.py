@@ -14,7 +14,6 @@ class MapColoring:
             self.color_area(color_index, self.last_position)
             color_index+=1
 
-
     def is_map_colored(self):
         return np.min(self.colored_map) > 0
 
