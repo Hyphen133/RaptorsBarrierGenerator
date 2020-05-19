@@ -15,13 +15,13 @@ class BarrierGenerator():
         self.robot_config = robot_config
         self.map_coloring = MapColoring()
 
-    def generate_barrier_boundaries(self, geometries_list, img):
-        empty_image = Image.fromarray(np.uint8(np.ones((img.shape[0],img.shape[1],3)))*255)
+    def generate_barrier_boundaries(self, geometries_list, contours_img):
+        empty_image = Image.fromarray(np.uint8(np.ones((contours_img.shape[0], contours_img.shape[1], 3))) * 255)
         external_boundary_geometry, internal_object_geometries = self.extract_internal_and_external_boundaries(geometries_list)
         new_lines = self.create_additional_lines_shorter_than_threshold(external_boundary_geometry, internal_object_geometries, self.robot_config.get_diameter())
 
         image_with_boundary_lines = self.draw_boundaries(empty_image, external_boundary_geometry, internal_object_geometries, new_lines)
-        return self.map_coloring.extract_colored_map(image_with_boundary_lines)
+        return self.map_coloring.extract_colored_map(image_with_boundary_lines, contours_img)
 
     def extract_internal_and_external_boundaries(self, geometries):
         external_boundary_geometry = geometries[0]

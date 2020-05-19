@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 class BarrierGenerationTests(TestBase):
     def test_generate_additional_lines(self):
         # given
-        img = np.array(Image.open("../test_resources/poly2.png").convert('L'))
+        img = np.array(Image.open("../test_resources/poly2.bmp").convert('L'))
         line_threshold = 50
         boundary_extractor = BoundaryExtractor()
         robot_config = RobotConfig(line_threshold)

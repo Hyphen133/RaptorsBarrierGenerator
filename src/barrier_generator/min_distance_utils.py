@@ -173,7 +173,10 @@ def convert_line_to_coefficients(line):
 
     #Hack for vertical lines
     if x1 == x2:
-        x1 = x1-0.000001
+        x1 = x1-0.00000001
+    if y1 == y2:
+        y1 = y1-0.0000001
+
 
     a = (y2 - y1) / (x2 - x1)
     b = y1 - a * x1
