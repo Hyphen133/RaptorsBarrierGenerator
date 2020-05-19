@@ -4,6 +4,7 @@ import numpy as np
 from PIL import Image, ImageDraw
 from shapely.geometry import LineString, Point
 
+from src.barrier_generator.map_coloring import MapColoring
 from src.barrier_generator.min_distance_utils import get_min_distance_pair_points, convert_line_to_formula, \
     calculate_delta_x, line_contains_point, Direction, get_intersection_points, convert_line_to_coefficients
 
@@ -12,13 +13,15 @@ class BarrierGenerator():
     def __init__(self,robot_config) -> None:
         super().__init__()
         self.robot_config = robot_config
+        self.map_coloring = MapColoring()
 
     def generate_barrier_boundaries(self, geometries_list, img):
         empty_image = Image.fromarray(np.uint8(np.ones((img.shape[0],img.shape[1],3)))*255)
         external_boundary_geometry, internal_object_geometries = self.extract_internal_and_external_boundaries(geometries_list)
         new_lines = self.create_additional_lines_shorter_than_threshold(external_boundary_geometry, internal_object_geometries, self.robot_config.get_diameter())
 
-        return self.draw_boundaries(empty_image, external_boundary_geometry, internal_object_geometries, new_lines)
+        image_with_boundary_lines = self.draw_boundaries(empty_image, external_boundary_geometry, internal_object_geometries, new_lines)
+        return self.map_coloring.extract_colored_map(image_with_boundary_lines)
 
     def extract_internal_and_external_boundaries(self, geometries):
         external_boundary_geometry = geometries[0]

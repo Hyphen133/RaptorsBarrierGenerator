@@ -20,27 +20,8 @@ class MapColoringTests(TestBase):
         map_coloring = MapColoring()
 
         #When
-        image = np.array(countours_image)
-        slic_out = slic(image)
-
-
-
-        for segs in (10, 50, 100, 300, 500, 1000):
-            segments = felzenszwalb(image, scale=segs)
-            plt.imshow(segments)
-            plt.show(z)
-            # random_colors = [(random.randrange(0, 255), random.randrange(0, 255), random.randrange(0, 255)) for i in range(int(np.max(segments)+1))]
-            # # segments = slic(image, n_segments=segs, sigma=4)
-            # colored_segments = np.zeros((segments.shape[0], segments.shape[1],3))
-            # for i in range(colored_segments.shape[0]):
-            #     for j in range(colored_segments.shape[1]):
-            #         colored_segments[i,j] = random_colors[segments[i,j]]
-            #
-            # fig = plt.figure(figsize=(12, 4))
-            # ax = fig.add_axes([0, 0, 1, 1])
-            # ax.imshow(mark_boundaries(image, segments))
-            # # ax.imshow(colored_segments)
-        # plt.show()
-        # map_coloring.extract_colored_map(countours_image)
+        segmentation_map = map_coloring.extract_colored_map(countours_image)
 
         #Then
+        plt.imshow(segmentation_map)
+        plt.show()
