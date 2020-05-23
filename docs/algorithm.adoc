@@ -1,0 +1,87 @@
+//Numering of sections
+:sectnums:
+:sectnumlevels: 5
+
+= Raptors Barrier Generator Algorithm
+---
+
+The overall goal of this algorithm is to take unprocessed image of map and convert
+it into regions that robot cannot access.
+
+== Input data
+
+=== Imaga data
+
+Image consists of 3 types of pixels:
+
+* [black]#*Black pixels*# - representing walls
+* [gray]#*Gray pixels*# - representing area outside of building boundary
+* [white]#*White pixels*# - represents area which robot can move
+
+image::images/map_example.png[Example input map]
+
+=== Robot's starting position
+
+IMPORTANT: Because of the fact that robot will be not able to enter specific positions,
+*accessible positions always depend on starting point*.
+
+Suppose we example presented on image below where we have 2 areas that have been returned from algorithm.
+From one we cannot pass to the other. In this case if robot starts in [yellow]#*yellow region*# it will be able to move only in yellow regions.
+It is analogical with [blue]#*blue regions*#.
+
+image::images/starting_positions.png[Starting position problem example]
+
+=== Robot shape information
+
+IMPORTANT: The assumption at this point is that we take the largest width of robot as the shape information
+
+== Extraction of boundaries between accessible and inaccessible part
+
+=== Problems and motiviations
+
+Due to the fact that input image is not in perfect condition we need to make clear division between impassable part
+and the part that can be accessed by robot.
+
+This problem is at the outer boundary of image. Boundary of outer image can currently have 2 forms. The former is between black and white parts,
+whereas the latter is between gray and white regions
+
+Furthermore the additional problem solved to local file by this module are small holes in black boundary.
+
+=== Solution and output
+
+The solution involves using usage of multiple filters both to fill small holes and extract boundary.
+It can be accessed in link:../src/map_processing/map_processing.py[following location].
+
+The *output image* contains of:
+
+* *Black pixels* - represent boundaries
+* [white]#*White pixels*# - respresenting other regions than boundaries
+
+image::images/boundaries_image.png[Image after extraction of boundaries, 300, 300]
+
+
+== Extracting polygons
+
+=== Motivation
+
+Polygons will be much easier to work with and are required for finding regions with current algorithm.
+
+=== Output
+
+Because boundaries have non-zero width we have to include 2 additional concepts, which are *inner and outer boundaries*.
+That part of algorithm returns all polygons with their inner and outer boundaries *as polygons*.
+
+== Finding impassable lines
+
+=== Problems and motiviations
+
+This is the key problem of the algorithm to find places which actually the robot won't be able to pass though.
+
+=== Detection of impassable lines based on polygonized boundaries
+
+
+=== Ouput
+
+
+
+
