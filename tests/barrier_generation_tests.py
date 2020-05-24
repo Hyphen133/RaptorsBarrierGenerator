@@ -23,4 +23,7 @@ class BarrierGenerationTests(TestBase):
         # then
         plt.imshow(image)
         plt.show()
+
+
+
         # self.assertEqual(img.shape[:2], np.array(image).shape[:2])
