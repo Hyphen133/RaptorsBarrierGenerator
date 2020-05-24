@@ -27,12 +27,22 @@ class SmartBruteForceTests(TestBase):
         # when
         passable_region, impassable_regions = barrier_generator.generate_regions(thickened_boundary_image)
 
-
         plt.title("Passable region")
         passable_region.show_boundary()
-        for i,region in enumerate(impassable_regions):
-            plt.title("Impassable region " + str(i))
-            region.show_boundary()
+
+        plt.title("Passable region after pologinization")
+        for region in passable_region.polygonize():
+            plt.plot(*region.exterior.xy)
+        plt.show()
+
+        # for i,region in enumerate(impassable_regions):
+        #     plt.title("Impassable region " + str(i))
+        #     region.show_boundary()
+        #
+        #     plt.title("After pologinization")
+        #     plt.plot(*region.polygonize().exterior.xy)
+        #     plt.show()
+
 
 
 

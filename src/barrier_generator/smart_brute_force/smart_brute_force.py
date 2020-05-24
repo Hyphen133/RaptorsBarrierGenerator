@@ -3,6 +3,9 @@ from collections import deque
 import numpy as np
 from scipy import signal
 import matplotlib.pyplot as plt
+from shapely.geometry import Polygon
+from skimage import measure
+
 
 class SmartBruteForce:
     NOT_CHECKED = 255
@@ -109,3 +112,14 @@ class Region():
     def show_boundary(self):
         plt.imshow(self.get_boundary(), cmap='gray')
         plt.show()
+
+    def polygonize(self):
+        return self.extract_polygons_geometries_from_img(self.get_area())
+
+    def extract_polygons_geometries_from_img(self, img, coutours_level=0.0001, poly_simplification_level=1.0):
+        #add padding booundary for areas that touch boundaries of image
+        padded_area = np.pad(self.get_area(), [(1, ), (1, )], mode='constant')
+
+        countours = measure.find_contours(padded_area, coutours_level)
+        return [Polygon(c).simplify(poly_simplification_level) for c in countours]
+
