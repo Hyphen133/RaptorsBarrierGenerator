@@ -14,7 +14,7 @@ class BarrierGenerationTests(TestBase):
         img = np.array(Image.open("../test_resources/poly2.bmp").convert('L'))
         line_threshold = 50
         boundary_extractor = BoundaryExtractor()
-        robot_config = RobotConfig(line_threshold)
+        robot_config = RobotConfig(line_threshold, None)
         barrier_generator = BarrierGenerator(robot_config)
 
         # when

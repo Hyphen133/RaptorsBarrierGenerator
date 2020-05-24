@@ -16,7 +16,7 @@ Image consists of 3 types of pixels:
 
 * [black]#*Black pixels*# - representing walls
 * [gray]#*Gray pixels*# - representing area outside of building boundary
-* [white]#*White pixels*# - represents area which robot can move
+* [white]#*White pixels*# - respresenting area which robot can move
 
 image::images/map_example.png[Example input map]
 
@@ -71,7 +71,7 @@ Polygons will be much easier to work with and are required for finding regions w
 Because boundaries have non-zero width we have to include 2 additional concepts, which are *inner and outer boundaries*.
 That part of algorithm returns all polygons with their inner and outer boundaries *as polygons*.
 
-== Finding impassable lines
+== Finding lines that robot won't be able to pass
 
 === Problems and motiviations
 
@@ -81,6 +81,23 @@ This is the key problem of the algorithm to find places which actually the robot
 
 
 === Ouput
+
+== Finding regions that robot won't be access from one another
+
+=== Region extraction based on boundaries
+
+==== Segmentation
+The solution used currently extracts segmentation map based on Felzenszwalb algorithm.
+
+==== Merging of small regions
+
+Because of the fact that segmentation may leave some small regions additional mergin needs to be done
+
+==== Final merging based on intial position of robot
+Final merging collects all regions that are not the one in which robot can move into larger ones and polygonizes those.
+
+=== Ouput
+The output of the module is the polygonized boundaries of all separate regions that cannot be accessed based on given starting point position.
 
 
 
