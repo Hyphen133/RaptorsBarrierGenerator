@@ -80,38 +80,36 @@ The *output* consists of single region that robot can pass and multple impassabl
 NOTE: Single region can be represented by multiple polygons cause of innerings
 
 
-== Vectorized analysis
+== Vectorized Analysis Algorith,
 
 NOTE: This is alternative to Smart Brute Force with better performance
 
 WARNING: Due to muliple step and higher complexity (including parameterization need) this solution was abandoned. It will be about 2x faster.
 
-== Extracting polygons
+=== Extracting polygons
 
-=== Motivation
+==== Motivation
 
 Polygons will be much easier to work with and are required for finding regions with current algorithm.
 
-=== Output
+==== Output
 
 Because boundaries have non-zero width we have to include 2 additional concepts, which are *inner and outer boundaries*.
 That part of algorithm returns all polygons with their inner and outer boundaries *as polygons*.
 
 
-== Finding lines that robot won't be able to pass
+=== Finding lines that robot won't be able to pass
 
-=== Problems and motiviations
+==== Problems and motiviations
 
 This is the key problem of the algorithm to find places which actually the robot won't be able to pass though.
 
-=== Detection of impassable lines based on polygonized boundaries
+==== Detection of impassable lines based on polygonized boundaries
 
 
-=== Ouput
+==== Ouput
 
-== Finding regions that robot won't be access from one another
-
-=== Region extraction based on boundaries
+=== Finding regions that robot won't be access from one another
 
 ==== Segmentation
 The solution used currently extracts segmentation map based on Felzenszwalb algorithm.
@@ -123,7 +121,7 @@ Because of the fact that segmentation may leave some small regions additional me
 ==== Final merging based on intial position of robot
 Final merging collects all regions that are not the one in which robot can move into larger ones and polygonizes those.
 
-=== Ouput
+==== Ouput
 The output of the module is the polygonized boundaries of all separate regions that cannot be accessed based on given starting point position.
 
 
