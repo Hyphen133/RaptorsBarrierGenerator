@@ -1,7 +1,8 @@
 
 import matplotlib.pyplot as plt
-from PIL import Image, ImageFilter
 import numpy as np
+from PIL import Image, ImageFilter
+
 
 class MapProcessing():
     def extract_contours(self, map_image):
