@@ -37,7 +37,7 @@ IMPORTANT: The assumption at this point is that we take the largest width of rob
 
 == Extraction of boundaries between accessible and inaccessible part
 
-=== Problems and motiviations
+=== Problems and motivations
 
 Due to the fact that input image is not in perfect condition we need to make clear division between impassable part
 and the part that can be accessed by robot.
@@ -60,6 +60,32 @@ The *output image* contains of:
 image::images/boundaries_image.png[Image after extraction of boundaries, 300, 300]
 
 
+== Smart Brute Force
+
+=== Problems and motivations
+
+This algorithm takes previously prepared map with extracted boundaries and transforms them straight to polygonized components representing regions that can and cannot be accessed by robot.
+
+=== Solution and output
+
+Before entering solution we extend boundaries by the radious of robot, those are regions that the robot won't be able to access
+
+Solution can be summarized as put robot in given starting position then extract region that it can pass through by moving in all directions.
+Then spawn model in other non-boundary or already visitied locations and start extracting impassable regions from there.
+
+It can be accessed in link:../src/barrier_generator/smart_brute_force/smart_brute_force.py[following location].
+
+The *output* consists of single region that robot can pass and multple impassable regions, each of them being represented as list of polygons.
+
+NOTE: Single region can be represented by multiple polygons cause of innerings
+
+
+== Vectorized analysis
+
+NOTE: This is alternative to Smart Brute Force with better performance
+
+WARNING: Due to muliple step and higher complexity (including parameterization need) this solution was abandoned. It will be about 2x faster.
+
 == Extracting polygons
 
 === Motivation
@@ -70,6 +96,7 @@ Polygons will be much easier to work with and are required for finding regions w
 
 Because boundaries have non-zero width we have to include 2 additional concepts, which are *inner and outer boundaries*.
 That part of algorithm returns all polygons with their inner and outer boundaries *as polygons*.
+
 
 == Finding lines that robot won't be able to pass
 

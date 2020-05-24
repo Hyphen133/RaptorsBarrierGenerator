@@ -2,6 +2,13 @@
 
 pip install scipy==1.1.0
 
+**Asciidoc (plugin)**
+
+gem install asciidoctor-pdf --pre
+
+asciidoctor-pdf algorithm.adoc 
+
+
 ## Motivation
 Many relationships are easier to be found on vectors
 
