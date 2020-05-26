@@ -1,10 +1,11 @@
 @startuml
 left to right direction
 
-RaptorsBarrierGenerator as RaptorsBarrierGenerator
-User -- (Generate Barriers)
+RaptorsApp as RaptorsApp
+User -- (Visualize Bariers)
 
-RaptorsBarrierGenerator -- (Generate Barriers)
-RaptorsBarrierGenerator -- (Load Map)
+(Visualize Bariers) .> (Generate Barriers) :includes
+RaptorsApp -- (Generate Barriers)
+RaptorsApp -- (Load Map)
 (Load Map) -- RaptorsDatabase
 @enduml
