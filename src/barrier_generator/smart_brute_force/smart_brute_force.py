@@ -1,6 +1,7 @@
 from collections import deque
 
 import numpy as np
+from PIL import Image
 from scipy import signal
 import matplotlib.pyplot as plt
 from shapely.geometry import Polygon
@@ -16,6 +17,21 @@ class SmartBruteForce:
     def __init__(self,robot_config) -> None:
         super().__init__()
         self.robot_config = robot_config
+
+    def generate_polygon_regions(self, image):
+        before_thicken_image = np.copy(image)
+        after_thicken_image = self.thicken_boundaries(image)
+
+        boundary_region = self.create_boundary_region(after_thicken_image,before_thicken_image)
+        passable_region, impassable_regions = self.generate_regions(after_thicken_image)
+        impassable_regions.append(boundary_region)
+
+        return passable_region.polygonize(), [region.polygonize() for region in impassable_regions]
+
+
+    def create_boundary_region(self, after_thicken_image, before_thicken_image):
+        return Region(np.array(np.not_equal(after_thicken_image,before_thicken_image),dtype=int))
+
 
     def thicken_boundaries(self, image):
         img = np.array(image)

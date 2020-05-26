@@ -12,6 +12,5 @@ class BarrierGenerationFacade():
         map_processing = MapProcessing()
 
         map_image = map_processing.extract_contours(map_image)
-        map_image = algorithm.thicken_boundaries(map_image)
-        return algorithm.generate_regions(map_image)
+        return algorithm.generate_polygon_regions(map_image)
 
