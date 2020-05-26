@@ -17,7 +17,8 @@ class SmartBruteForce:
         super().__init__()
         self.robot_config = robot_config
 
-    def thicken_boundaries(self, img):
+    def thicken_boundaries(self, image):
+        img = np.array(image)
         line_threshold = self.robot_config.get_diameter()
         WHITE_PIXEL = 255
         out_img = WHITE_PIXEL - img
