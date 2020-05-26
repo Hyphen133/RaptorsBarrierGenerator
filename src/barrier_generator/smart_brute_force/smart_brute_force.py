@@ -18,9 +18,20 @@ class SmartBruteForce:
         super().__init__()
         self.robot_config = robot_config
 
-    def generate_polygon_regions(self, image):
+    def generate_polygon_regions(self, image, plot=False):
         before_thicken_image = np.copy(image)
         after_thicken_image = self.thicken_boundaries(image)
+
+        if plot:
+            plt.imshow(before_thicken_image, cmap='gray')
+            plt.title("Before thicken boundaries")
+            plt.show()
+
+
+            plt.imshow(after_thicken_image, cmap='gray')
+            plt.title("After thicken")
+            plt.show()
+
 
         boundary_region = self.create_boundary_region(after_thicken_image,before_thicken_image)
         passable_region, impassable_regions = self.generate_regions(after_thicken_image)

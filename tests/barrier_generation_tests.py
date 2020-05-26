@@ -36,8 +36,8 @@ class BarrierGenerationTests(TestBase):
         map_processing = FilePathMapLoader(filepath)
         map_image = map_processing.load_image()
 
-        robot_diameter = 50
-        robot_starting_position = (10,10)
+        robot_diameter = 10
+        robot_starting_position = (150, 350)
 
         #when
         regions = api.generate_barriers(map_image,robot_diameter,robot_starting_position)
