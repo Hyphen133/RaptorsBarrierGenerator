@@ -4,9 +4,8 @@ import numpy as np
 from PIL import Image, ImageDraw
 from shapely.geometry import LineString, Point
 
-from src.barrier_generator.map_coloring import MapColoring
-from src.barrier_generator.min_distance_utils import get_min_distance_pair_points, convert_line_to_formula, \
-    calculate_delta_x, line_contains_point, Direction, get_intersection_points, convert_line_to_coefficients
+from src.barrier_generator.vectorized_analysis_algorithm.map_coloring import MapColoring
+from src.barrier_generator.vectorized_analysis_algorithm.min_distance_utils import get_min_distance_pair_points, line_contains_point, Direction, get_intersection_points, convert_line_to_coefficients
 
 
 class BarrierGenerator():

@@ -1,8 +1,9 @@
 from PIL import Image
 
-from src.barrier_generator.barrier_generator import BarrierGenerator
-from src.barrier_generator.boundary_extractor import BoundaryExtractor
-from src.barrier_generator.robot_config import RobotConfig
+from src.barrier_generator.vectorized_analysis_algorithm.barrier_generator import BarrierGenerator
+from src.barrier_generator.vectorized_analysis_algorithm.boundary_extractor import BoundaryExtractor
+from src.barrier_generator.vectorized_analysis_algorithm.robot_config import RobotConfig
+from src.map_processing.map_processing import MapProcessing
 from tests.test_base import TestBase
 
 import numpy as np

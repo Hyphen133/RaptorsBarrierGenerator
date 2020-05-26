@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-from src.barrier_generator.map_coloring import MapColoring
+from src.barrier_generator.vectorized_analysis_algorithm.map_coloring import MapColoring
 from src.map_processing.map_loading import FilePathMapLoader
 from tests.test_base import TestBase
 

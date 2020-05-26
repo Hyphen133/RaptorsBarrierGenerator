@@ -1,7 +1,6 @@
 from PIL import Image
-from scipy import signal
 
-from src.barrier_generator.robot_config import RobotConfig
+from src.barrier_generator.vectorized_analysis_algorithm.robot_config import RobotConfig
 from src.barrier_generator.smart_brute_force.smart_brute_force import SmartBruteForce
 from tests.test_base import TestBase
 import numpy as np
