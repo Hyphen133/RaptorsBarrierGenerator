@@ -34,7 +34,7 @@ class SmartBruteForce:
 
 
         boundary_region = self.create_boundary_region(after_thicken_image,before_thicken_image)
-        passable_region, impassable_regions = self.generate_regions(after_thicken_image)
+        passable_region, impassable_regions = self.generate_regions(after_thicken_image, plot=plot)
         impassable_regions.append(boundary_region)
 
         return passable_region.polygonize(), [region.polygonize() for region in impassable_regions]
@@ -54,7 +54,7 @@ class SmartBruteForce:
         out_img = (1 - np.array(out_img > 0, dtype=int)) * WHITE_PIXEL
         return out_img
 
-    def generate_regions(self, map_image):
+    def generate_regions(self, map_image, plot=False):
         blocked_regions = []
         map = np.copy(map_image)
 
@@ -69,6 +69,26 @@ class SmartBruteForce:
                 map = self.merge_region_to_map(map, region_map)
                 blocked_regions.append(Region(region_map))
         except ValueError:
+
+            if plot:
+                plt.title("Passable region")
+                passable_region.show_boundary()
+
+                plt.title("Passable region after pologinization")
+                for region in passable_region.polygonize():
+                    plt.plot(*region.exterior.xy)
+                plt.show()
+
+                for i, region in enumerate(blocked_regions):
+                    plt.title("Impassable region " + str(i))
+                    region.show_boundary()
+
+                    plt.title("After pologinization")
+                    for poly in region.polygonize():
+                        plt.plot(poly.exterior.xy)
+                    plt.show()
+
+
             return passable_region, blocked_regions
 
     def merge_region_to_map(self, map, region):

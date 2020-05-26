@@ -40,7 +40,7 @@ class BarrierGenerationTests(TestBase):
         robot_starting_position = (150, 350)
 
         #when
-        regions = api.generate_barriers(map_image,robot_diameter,robot_starting_position)
+        regions = api.generate_barriers(map_image,robot_diameter,robot_starting_position, plot=True)
 
         #then
         self.assertTrue(2, len(regions))
