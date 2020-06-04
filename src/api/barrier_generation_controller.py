@@ -12,5 +12,6 @@ class BarrierGenerationFacade():
         map_processing = MapProcessing()
 
         map_image = map_processing.extract_contours(map_image)
-        return algorithm.generate_polygon_regions(map_image,plot=plot)
+        #Returning only impassable regions
+        return algorithm.generate_polygon_regions(map_image,plot=plot)[1]
 
