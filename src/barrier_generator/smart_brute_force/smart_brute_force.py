@@ -82,6 +82,7 @@ class SmartBruteForce:
                 for i, region in enumerate(blocked_regions):
                     plt.title("Impassable region " + str(i))
                     region.show_boundary()
+                    region.show_area()
 
                     plt.title("After pologinization")
                     for poly in region.polygonize():
