@@ -162,7 +162,7 @@ class Region():
         plt.show()
 
     def polygonize(self):
-        return self.extract_polygons_geometries_from_img(self.get_boundary())
+        return self.extract_polygons_geometries_from_img(self.get_area())
 
     def show_polygonized(self):
         for polygon in self.polygonize():
