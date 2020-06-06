@@ -12,7 +12,7 @@ class SmartBruteForceTests(TestBase):
         img = np.array(Image.open("../test_resources/poly2.bmp").convert('L'))
         line_threshold = 40
         # starting_position = (75,650)
-        starting_position = (150, 350)
+        starting_position = (50, 350)
         robot_config = RobotConfig(line_threshold, starting_position)
         barrier_generator = SmartBruteForce(robot_config)
 

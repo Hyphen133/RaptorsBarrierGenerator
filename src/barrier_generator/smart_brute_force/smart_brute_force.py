@@ -27,7 +27,6 @@ class SmartBruteForce:
             plt.title("Before thicken boundaries")
             plt.show()
 
-
             plt.imshow(after_thicken_image, cmap='gray')
             plt.title("After thicken")
             plt.show()
@@ -73,22 +72,22 @@ class SmartBruteForce:
             if plot:
                 plt.title("Passable region")
                 passable_region.show_boundary()
+                plt.title("Passable region")
+                passable_region.show_area()
+
 
                 plt.title("Passable region after pologinization")
-                for region in passable_region.polygonize():
-                    plt.plot(*region.exterior.xy)
-                plt.show()
+                passable_region.show_polygonized()
 
                 for i, region in enumerate(blocked_regions):
                     plt.title("Impassable region " + str(i))
                     region.show_boundary()
+
+                    plt.title("Impassable region area" + str(i))
                     region.show_area()
 
                     plt.title("After pologinization")
-                    for poly in region.polygonize():
-                        plt.plot(poly.exterior.xy)
-                    plt.show()
-
+                    region.show_polygonized()
 
             return passable_region, blocked_regions
 
@@ -163,12 +162,17 @@ class Region():
         plt.show()
 
     def polygonize(self):
-        return self.extract_polygons_geometries_from_img(self.get_area())
+        return self.extract_polygons_geometries_from_img(self.get_boundary())
+
+    def show_polygonized(self):
+        for polygon in self.polygonize():
+            plt.plot(*polygon.exterior.xy)
+        plt.show()
 
     def extract_polygons_geometries_from_img(self, img, coutours_level=0.0001, poly_simplification_level=1.0):
         #add padding booundary for areas that touch boundaries of image
-        padded_area = np.pad(self.get_area(), [(1, ), (1, )], mode='constant')
-
+        # padded_area = np.pad(img, [(1, ), (1, )], mode='constant')
+        padded_area = img
         countours = measure.find_contours(padded_area, coutours_level)
         return [Polygon(c).simplify(poly_simplification_level) for c in countours]
 
