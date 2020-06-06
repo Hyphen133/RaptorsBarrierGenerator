@@ -170,7 +170,7 @@ class Region():
         plt.show()
 
     def extract_polygons_geometries_from_img(self, img, coutours_level=0.0001, poly_simplification_level=1.0):
-        #add padding booundary for areas that touch boundaries of image
+        # add padding booundary for areas that touch boundaries of image
         # padded_area = np.pad(img, [(1, ), (1, )], mode='constant')
         padded_area = img
         countours = measure.find_contours(padded_area, coutours_level)
