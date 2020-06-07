@@ -163,6 +163,8 @@ class Region():
         plt.show()
 
     def polygonize(self):
+        self.check_passable_area_does_not_touch_boundary()
+
         polygons = self.extract_polygons_geometries_from_img(self.get_area())
         if self.are_polygon_geometries_with_innerings(polygons):
             outer_polygon = self.find_outer_polygon(polygons)
@@ -207,6 +209,22 @@ class Region():
         padded_area = img
         countours = measure.find_contours(padded_area, coutours_level)
         return [Polygon(c).simplify(poly_simplification_level) for c in countours]
+
+    def check_passable_area_does_not_touch_boundary(self):
+        first_row = self.region_map[0,:]
+        last_row = self.region_map[-1,:]
+        first_colmun = self.region_map[:,0]
+        last_column = self.region_map[:,-1]
+
+        self.raise_exception_if_vector_contains_passable(first_row)
+        self.raise_exception_if_vector_contains_passable(last_row)
+        self.raise_exception_if_vector_contains_passable(first_colmun)
+        self.raise_exception_if_vector_contains_passable(last_column)
+
+    def raise_exception_if_vector_contains_passable(self, first_row):
+        if np.any(first_row == SmartBruteForce.PASSABLE):
+            raise Exception("Region at boundary is not supported!! It may be because of wrong map or position of robot")
+
 
 class PolygonWithInnerings():
     def __init__(self, outer_polygon, innering_polygons) -> None:

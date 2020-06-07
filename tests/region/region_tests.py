@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from src.barrier_generator.smart_brute_force.smart_brute_force import Region
+from src.barrier_generator.smart_brute_force.smart_brute_force import Region, SmartBruteForce
 from src.map_processing.map_loading import FilePathMapLoader
 import numpy as np
 
@@ -10,7 +10,6 @@ class RegionTests(TestCase):
         region = self.load_region_from_test_file('area1.bmp')
 
         # When
-        region.show_area()
         polygonized_region = region.polygonize()
 
         # Then
@@ -29,7 +28,7 @@ class RegionTests(TestCase):
 
     def load_region_from_test_file(self, filepath):
         #Makes PASSABLE from white
-        region_map = np.array(FilePathMapLoader(filepath).load_image())/2 + 0.5
+        region_map = np.array(np.array(FilePathMapLoader(filepath).load_image()) == 0, dtype=int)* SmartBruteForce.PASSABLE
         region = Region(region_map)
         return region
 
@@ -48,11 +47,25 @@ class RegionTests(TestCase):
         region = self.load_region_from_test_file('area3.bmp')
 
         # When
-        polygonized_region = region.polygonize()
+        was_exception_thrown = False
+        try:
+            polygonized_region = region.polygonize()
+        except Exception:
+            was_exception_thrown = True
 
         # Then
-        
+        self.assertTrue(was_exception_thrown)
 
     def test_throws_exception_on_area_touching_bonudary(self):
-        #TODO -> implement
-        pass
+        # Given
+        region = self.load_region_from_test_file('area5.bmp')
+
+        # When
+        was_exception_thrown = False
+        try:
+            polygonized_region = region.polygonize()
+        except Exception:
+            was_exception_thrown = True
+
+        # Then
+        self.assertTrue(was_exception_thrown)
