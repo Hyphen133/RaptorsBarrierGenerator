@@ -182,9 +182,10 @@ class Region():
             final_polygons.append(polygon_with_innerings.outer_polygon)
         else:
             splitting_line = polygon_with_innerings.get_vertical_split_line_for_first_innering()
-            polygon_with_innerings1,polygon_with_innerings2 = polygon_with_innerings.split_by_line(splitting_line)
-            self.split_till_no_innerings_left(polygon_with_innerings1,final_polygons)
-            self.split_till_no_innerings_left(polygon_with_innerings2, final_polygons)
+            polygons_with_innerings_after_split = polygon_with_innerings.split_by_line(splitting_line)
+
+            for polygon in polygons_with_innerings_after_split:
+                self.split_till_no_innerings_left(polygon,final_polygons)
 
     def are_polygon_geometries_with_innerings(self, polygons):
         return len(polygons) > 1
@@ -234,21 +235,24 @@ class PolygonWithInnerings():
 
     def split_by_line(self, line):
         outer_polygon_collection = split(self.outer_polygon, line)
-        outer_polygon_parts = [outer_polygon_collection[0], outer_polygon_collection[1]]
-        polygon_innerings = [[],[]]
+        outer_polygon_parts = [outer_polygon_collection[i] for i in range(len(outer_polygon_collection))]
+        index_polygon_innerings = {}
+
+        for i in range(len(outer_polygon_parts)):
+            index_polygon_innerings[i] = []
 
 
         for inner_polygon in self.innering_polygons:
             if len(split(inner_polygon, line)) == 2:
-                outer_polygon_parts[0] = outer_polygon_parts[0].difference(inner_polygon)
-                outer_polygon_parts[1] = outer_polygon_parts[1].difference(inner_polygon)
+                for outer_polygon_part in outer_polygon_parts:
+                    outer_polygon_part = outer_polygon_part.difference(inner_polygon)
             else:
-                if outer_polygon_parts[0].contains(inner_polygon):
-                    polygon_innerings[0].append(inner_polygon)
-                if outer_polygon_parts[1].contains(inner_polygon):
-                    polygon_innerings[1].append(inner_polygon)
+                for i, outer_polygon_part in enumerate(outer_polygon_parts):
+                    if outer_polygon_part.contains(inner_polygon):
+                        index_polygon_innerings[i].append(inner_polygon)
 
-        return PolygonWithInnerings(outer_polygon_parts[0],polygon_innerings[0]),PolygonWithInnerings(outer_polygon_parts[1],polygon_innerings[1])
+
+        return [PolygonWithInnerings(outer_polygon_parts[i],index_polygon_innerings[i]) for i in range(len(outer_polygon_parts))]
 
     def get_vertical_split_line_for_first_innering(self):
         return self.get_horizontal_line_going_through_center_of_mass(self.outer_polygon)

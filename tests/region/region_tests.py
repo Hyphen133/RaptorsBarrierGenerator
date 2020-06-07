@@ -10,21 +10,21 @@ class RegionTests(TestCase):
         region = self.load_region_from_test_file('area1.bmp')
 
         # When
-        polygonized_region = region.polygonize()
+        polygonized_regions = region.polygonize()
 
         # Then
-        self.assertTrue(len(polygonized_region), 1)
+        self.assertTrue(len(polygonized_regions), 1)
 
     def test_split_areas_with_single_innering(self):
         # Given
         region = self.load_region_from_test_file('area2.bmp')
 
         # When
-        polygonized_region = region.polygonize()
+        polygonized_regions = region.polygonize()
 
         # Then
-        self.assertTrue(len(polygonized_region), 2)
-        self.assertFalse(polygonized_region[0].contains(polygonized_region[1]) or polygonized_region[1].contains(polygonized_region[0]))
+        self.assertTrue(len(polygonized_regions), 2)
+        self.assertFalse(polygonized_regions[0].contains(polygonized_regions[1]) or polygonized_regions[1].contains(polygonized_regions[0]))
 
     def load_region_from_test_file(self, filepath):
         #Makes PASSABLE from white
@@ -37,10 +37,10 @@ class RegionTests(TestCase):
         region = self.load_region_from_test_file('area4.bmp')
 
         # When
-        polygonized_region = region.polygonize()
+        polygonized_regions = region.polygonize()
 
         # Then
-        self.assertTrue(len(polygonized_region), 3)
+        self.assertTrue(len(polygonized_regions), 3)
 
     def test_throws_exception_from_full_area_touching_boundary(self):
         # Given
@@ -49,7 +49,7 @@ class RegionTests(TestCase):
         # When
         was_exception_thrown = False
         try:
-            polygonized_region = region.polygonize()
+            polygonized_regions = region.polygonize()
         except Exception:
             was_exception_thrown = True
 
@@ -63,7 +63,7 @@ class RegionTests(TestCase):
         # When
         was_exception_thrown = False
         try:
-            polygonized_region = region.polygonize()
+            polygonized_regions = region.polygonize()
         except Exception:
             was_exception_thrown = True
 
