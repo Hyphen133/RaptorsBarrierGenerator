@@ -1,3 +1,4 @@
+import os
 from unittest import TestCase
 
 from src.barrier_generator.smart_brute_force.smart_brute_force import Region, SmartBruteForce
@@ -10,7 +11,7 @@ from tests.test_base import TestBase
 class RegionTests(TestBase):
     def test_extract_boundary_from_full_area(self):
         # Given
-        region = self.load_region_from_test_file('../../test_resources/areas/area1.bmp')
+        region = self.load_region_from_test_area_file('area1.bmp')
 
         # When
         polygonized_regions = region.polygonize()
@@ -20,7 +21,7 @@ class RegionTests(TestBase):
 
     def test_split_areas_with_single_innering(self):
         # Given
-        region = self.load_region_from_test_file('../../test_resources/areas/area2.bmp')
+        region = self.load_region_from_test_area_file('area2.bmp')
 
         # When
         polygonized_regions = region.polygonize()
@@ -29,15 +30,16 @@ class RegionTests(TestBase):
         self.assertTrue(len(polygonized_regions), 2)
         self.assertFalse(polygonized_regions[0].contains(polygonized_regions[1]) or polygonized_regions[1].contains(polygonized_regions[0]))
 
-    def load_region_from_test_file(self, filepath):
+    def load_region_from_test_area_file(self, filename):
+        area_filepath = self.resource_loader.get_resource_by_filepath('areas' + os.sep + filename)
         #Makes PASSABLE from white
-        region_map = np.array(np.array(FilePathMapLoader(filepath).load_image()) == 0, dtype=int)* SmartBruteForce.PASSABLE
+        region_map = np.array(np.array(FilePathMapLoader(area_filepath).load_image()) == 0, dtype=int)* SmartBruteForce.PASSABLE
         region = Region(region_map)
         return region
 
     def test_split_areas_with_multiple_innering(self):
         # Given
-        region = self.load_region_from_test_file('../../test_resources/areas/area4.bmp')
+        region = self.load_region_from_test_area_file('area4.bmp')
 
         # When
         polygonized_regions = region.polygonize()
@@ -47,7 +49,7 @@ class RegionTests(TestBase):
 
     def test_throws_exception_from_full_area_touching_boundary(self):
         # Given
-        region = self.load_region_from_test_file('../../test_resources/areas/area3.bmp')
+        region = self.load_region_from_test_area_file('area3.bmp')
 
         # When
         was_exception_thrown = False
@@ -61,7 +63,7 @@ class RegionTests(TestBase):
 
     def test_throws_exception_on_area_touching_bonudary(self):
         # Given
-        region = self.load_region_from_test_file('../../test_resources/areas/area5.bmp')
+        region = self.load_region_from_test_area_file('area5.bmp')
 
         # When
         was_exception_thrown = False

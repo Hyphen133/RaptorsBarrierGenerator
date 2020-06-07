@@ -1,3 +1,5 @@
+import unittest
+
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -8,6 +10,7 @@ from tests.test_base import TestBase
 
 # http://melvincabatuan.github.io/SLIC-Superpixels/
 class MapColoringTests(TestBase):
+    @unittest.skip
     def test_color_map(self):
         #Given
         countours_image_filepath = self.resource_loader.get_resource_by_filepath('contours_to_be_colored.png')

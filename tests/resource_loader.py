@@ -1,12 +1,11 @@
 import os
 
-from PIL.PpmImagePlugin import PpmImageFile
-
+from src.project_management.filepath_management import FilepathManagement
 
 class ResourceLoader:
     def get_test_map_filepath(self,filename):
-        return os.path.join(os.getcwd(), '..', 'test_resources', 'maps', filename)
+        return FilepathManagement.get_test_resources_directory_path().joinpath('maps').joinpath(filename)
 
     def get_resource_by_filepath(self,filepath):
-        return os.path.join(os.getcwd(), '..', 'test_resources', filepath)
+        return FilepathManagement.get_test_resources_directory_path().joinpath(filepath)
 

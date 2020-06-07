@@ -1,9 +1,12 @@
+import unittest
+
 from src.map_processing.database_config import DatabaseConfig
 from src.map_processing.map_loading import MapLoader, FilePathMapLoader
 from tests.test_base import TestBase
 
 
 class MapLoadingTests(TestBase):
+    @unittest.skip
     def test_database_integration(self):
         #given
         database_config = DatabaseConfig()
