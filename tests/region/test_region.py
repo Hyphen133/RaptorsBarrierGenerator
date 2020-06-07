@@ -4,10 +4,13 @@ from src.barrier_generator.smart_brute_force.smart_brute_force import Region, Sm
 from src.map_processing.map_loading import FilePathMapLoader
 import numpy as np
 
-class RegionTests(TestCase):
+from tests.test_base import TestBase
+
+
+class RegionTests(TestBase):
     def test_extract_boundary_from_full_area(self):
         # Given
-        region = self.load_region_from_test_file('area1.bmp')
+        region = self.load_region_from_test_file('../../test_resources/areas/area1.bmp')
 
         # When
         polygonized_regions = region.polygonize()
@@ -17,7 +20,7 @@ class RegionTests(TestCase):
 
     def test_split_areas_with_single_innering(self):
         # Given
-        region = self.load_region_from_test_file('area2.bmp')
+        region = self.load_region_from_test_file('../../test_resources/areas/area2.bmp')
 
         # When
         polygonized_regions = region.polygonize()
@@ -34,7 +37,7 @@ class RegionTests(TestCase):
 
     def test_split_areas_with_multiple_innering(self):
         # Given
-        region = self.load_region_from_test_file('area4.bmp')
+        region = self.load_region_from_test_file('../../test_resources/areas/area4.bmp')
 
         # When
         polygonized_regions = region.polygonize()
@@ -44,7 +47,7 @@ class RegionTests(TestCase):
 
     def test_throws_exception_from_full_area_touching_boundary(self):
         # Given
-        region = self.load_region_from_test_file('area3.bmp')
+        region = self.load_region_from_test_file('../../test_resources/areas/area3.bmp')
 
         # When
         was_exception_thrown = False
@@ -58,7 +61,7 @@ class RegionTests(TestCase):
 
     def test_throws_exception_on_area_touching_bonudary(self):
         # Given
-        region = self.load_region_from_test_file('area5.bmp')
+        region = self.load_region_from_test_file('../../test_resources/areas/area5.bmp')
 
         # When
         was_exception_thrown = False
