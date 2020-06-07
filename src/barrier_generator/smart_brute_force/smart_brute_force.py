@@ -9,6 +9,10 @@ from shapely.ops import split
 from skimage import measure
 
 
+def flatten_list(list_of_lists):
+    return [y for x in list_of_lists for y in x]
+
+
 class SmartBruteForce:
     NOT_CHECKED = 255
     PASSABLE = 128
@@ -36,7 +40,8 @@ class SmartBruteForce:
         passable_region, impassable_regions = self.generate_regions(after_thicken_image, plot=plot)
         impassable_regions.append(boundary_region)
 
-        return passable_region.polygonize(), [region.polygonize() for region in impassable_regions]
+        return passable_region.polygonize(), flatten_list([region.polygonize() for region in impassable_regions])
+
 
     def create_boundary_region(self, after_thicken_image, before_thicken_image):
         return Region(np.array(np.not_equal(after_thicken_image, before_thicken_image), dtype=int))

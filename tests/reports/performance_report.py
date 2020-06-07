@@ -17,11 +17,11 @@ resource_loader = ResourceLoader()
 barrier_generator = BarrierGenerationFacade()
 
 
-map_name, robot_diamater, robot_starting_position = config[0]
+map_name, robot_diameter, robot_starting_position = config[0]
 map_filepath = resource_loader.get_test_map_filepath(map_name)
 map_image = FilePathMapLoader(map_filepath).load_image()
 
-impassable_polygons = barrier_generator.generate_barriers(map_image)
+impassable_polygons = barrier_generator.generate_barriers(map_image, robot_diameter, robot_starting_position)
 
 plt.title("Impassable regions")
 show_polygons(impassable_polygons)
