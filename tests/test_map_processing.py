@@ -17,7 +17,6 @@ class MapProcessingTests(TestBase):
 
         # then
         map_processing.show_image(map_image)
-        # map_image.save('map.bmp')
         self.is_PIL_Image(map_image)
         self.image_only_have_white_or_black_pixels(map_image)
 
