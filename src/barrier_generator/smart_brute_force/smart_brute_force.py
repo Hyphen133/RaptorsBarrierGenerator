@@ -1,10 +1,11 @@
+from cmath import inf
 from collections import deque
 
-import numpy as np
-from PIL import Image
-from scipy import signal
 import matplotlib.pyplot as plt
-from shapely.geometry import Polygon
+import numpy as np
+from scipy import signal
+from shapely.geometry import Polygon, LineString
+from shapely.ops import split
 from skimage import measure
 
 
@@ -162,7 +163,38 @@ class Region():
         plt.show()
 
     def polygonize(self):
-        return self.extract_polygons_geometries_from_img(self.get_area())
+        polygons = self.extract_polygons_geometries_from_img(self.get_area())
+        if self.are_polygon_geometries_with_innerings(polygons):
+            outer_polygon = self.find_outer_polygon(polygons)
+            inner_polygons = polygons.copy()
+            inner_polygons.remove(outer_polygon)
+            polygon_with_innerings = PolygonWithInnerings(outer_polygon, inner_polygons)
+
+            polygons = []
+            self.split_till_no_innerings_left(polygon_with_innerings,polygons)
+
+        return polygons
+
+    def split_till_no_innerings_left(self, polygon_with_innerings, final_polygons):
+        if len(polygon_with_innerings.innering_polygons) == 0:
+            final_polygons.append(polygon_with_innerings.outer_polygon)
+        else:
+            splitting_line = polygon_with_innerings.get_vertical_split_line_for_first_innering()
+            polygon_with_innerings1,polygon_with_innerings2 = polygon_with_innerings.split_by_line(splitting_line)
+            self.split_till_no_innerings_left(polygon_with_innerings1,final_polygons)
+            self.split_till_no_innerings_left(polygon_with_innerings2, final_polygons)
+
+    def are_polygon_geometries_with_innerings(self, polygons):
+        return len(polygons) > 1
+
+    def find_outer_polygon(self, polygons):
+        for polygon1 in polygons:
+            for polygon2 in polygons:
+                if polygon1.contains(polygon2):
+                    return polygon1
+                if polygon2.contains(polygon1):
+                    return polygon2
+        raise Exception("Outer polygon not found")
 
     def show_polygonized(self):
         for polygon in self.polygonize():
@@ -176,3 +208,41 @@ class Region():
         countours = measure.find_contours(padded_area, coutours_level)
         return [Polygon(c).simplify(poly_simplification_level) for c in countours]
 
+class PolygonWithInnerings():
+    def __init__(self, outer_polygon, innering_polygons) -> None:
+        super().__init__()
+        self.outer_polygon = outer_polygon
+        self.innering_polygons = innering_polygons
+
+    def split_by_line(self, line):
+        outer_polygon_collection = split(self.outer_polygon, line)
+        outer_polygon_parts = [outer_polygon_collection[0], outer_polygon_collection[1]]
+        polygon_innerings = [[],[]]
+
+
+        for inner_polygon in self.innering_polygons:
+            if len(split(inner_polygon, line)) == 2:
+                outer_polygon_parts[0] = outer_polygon_parts[0].difference(inner_polygon)
+                outer_polygon_parts[1] = outer_polygon_parts[1].difference(inner_polygon)
+            else:
+                if outer_polygon_parts[0].contains(inner_polygon):
+                    polygon_innerings[0].append(inner_polygon)
+                if outer_polygon_parts[1].contains(inner_polygon):
+                    polygon_innerings[1].append(inner_polygon)
+
+        return PolygonWithInnerings(outer_polygon_parts[0],polygon_innerings[0]),PolygonWithInnerings(outer_polygon_parts[1],polygon_innerings[1])
+
+    def get_vertical_split_line_for_first_innering(self):
+        return self.get_horizontal_line_going_through_center_of_mass(self.outer_polygon)
+
+    def get_horizontal_line_going_through_center_of_mass(self, polygon):
+        center_x, center_y = polygon.centroid.coords.xy
+        min_y = -inf
+        max_y = inf
+        for x, y in polygon.exterior.coords:
+            if y>min_y:
+                min_y = y
+            if y<max_y:
+                max_y = y
+
+        return LineString([(center_x[0],min_y),(center_x[0],max_y)])
