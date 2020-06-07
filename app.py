@@ -6,10 +6,11 @@ import os
 from src.api.barrier_generation_controller import BarrierGenerationFacade
 from tests.resource_loader import ResourceLoader
 from flask import jsonify, request
+from src.map_processing.map_loading import MapLoader
+from dotenv import load_dotenv
+load_dotenv()
 
 app = Flask(__name__)
-
-URL = 'http://s000.tinyupload.com/download.php?file_id=59102213236179943709&t=5910221323617994370949353'
 
 
 @app.route('/')
@@ -54,9 +55,11 @@ def performance_test():
     return jsonify(performance_test_result)
 
 
-@app.route('/unit_tests')
-def unit_tests():
-    performance_test_result = {'time': 0.1, 'passed': True}
+@app.route('/map_request_test')
+def map_request_test():
+    database_config = {}
+    map_loader = MapLoader(database_config)
+    performance_test_result = {'time': 0.1, 'passed': True, 'db': os.environ.get('database-url')}
     return jsonify(performance_test_result)
 
 
