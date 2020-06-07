@@ -40,11 +40,14 @@ class SmartBruteForce:
         passable_region, impassable_regions = self.generate_regions(after_thicken_image, plot=plot)
         impassable_regions.append(boundary_region)
 
+        if plot:
+            boundary_region.show_area()
+
         return passable_region.polygonize(), flatten_list([region.polygonize() for region in impassable_regions])
 
-
     def create_boundary_region(self, after_thicken_image, before_thicken_image):
-        return Region(np.array(np.not_equal(after_thicken_image, before_thicken_image), dtype=int))
+        return Region(np.maximum(255 + after_thicken_image - before_thicken_image,
+                                 np.ones_like(after_thicken_image) * SmartBruteForce.PASSABLE))
 
     def thicken_boundaries(self, image):
         img = np.array(image)
@@ -98,10 +101,8 @@ class SmartBruteForce:
 
             return passable_region, blocked_regions
 
-
     def merge_region_to_map(self, map, region):
         return map * np.array(region != SmartBruteForce.PASSABLE, dtype=int)
-
 
     def find_next_region_position(self, map_image):
         next_region_starting_position = np.argwhere(map_image == SmartBruteForce.NOT_CHECKED)
@@ -109,7 +110,6 @@ class SmartBruteForce:
             return next_region_starting_position[0]
         except Exception:
             raise ValueError("No more UNCHECKED regions found!!")
-
 
     def generate_region(self, map_image, region_starting_position):
         positions_to_be_checked = deque([region_starting_position])
@@ -140,11 +140,9 @@ class SmartBruteForce:
 
         return position_map
 
-
     def add_position(self, position_map, pos, positions_to_be_checked):
         if position_map[pos[0], pos[1]] == SmartBruteForce.NOT_CHECKED and pos not in positions_to_be_checked:
             positions_to_be_checked.append(pos)
-
 
     def create_circle_array(self, center_x, center_y, square_side, radius, value=1):
         y, x = np.ogrid[-center_x:square_side - center_x, -center_y:square_side - center_y]
@@ -255,8 +253,8 @@ class PolygonWithInnerings():
 
         for inner_polygon in self.innering_polygons:
             if len(split(inner_polygon, line)) == 2:
-                for outer_polygon_part in outer_polygon_parts:
-                    outer_polygon_part = outer_polygon_part.difference(inner_polygon)
+                for i,outer_polygon_part in enumerate(outer_polygon_parts):
+                    outer_polygon_parts[i] = outer_polygon_part.difference(inner_polygon)
             else:
                 for i, outer_polygon_part in enumerate(outer_polygon_parts):
                     if outer_polygon_part.contains(inner_polygon):
