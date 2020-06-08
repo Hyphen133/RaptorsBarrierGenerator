@@ -4,7 +4,7 @@ from collections import deque
 import matplotlib.pyplot as plt
 import numpy as np
 from scipy import signal
-from shapely.geometry import Polygon, LineString
+from shapely.geometry import Polygon, LineString, MultiPolygon
 from shapely.ops import split
 from skimage import measure
 
@@ -12,6 +12,10 @@ from skimage import measure
 def flatten_list(list_of_lists):
     return [y for x in list_of_lists for y in x]
 
+def show_polygon(polygon, plot=False):
+    plt.plot(*polygon.exterior.xy)
+    if plot:
+        plt.show()
 
 class SmartBruteForce:
     NOT_CHECKED = 255
@@ -46,8 +50,7 @@ class SmartBruteForce:
         return passable_region.polygonize(), flatten_list([region.polygonize() for region in impassable_regions])
 
     def create_boundary_region(self, after_thicken_image, before_thicken_image):
-        return Region(np.maximum(255 + after_thicken_image - before_thicken_image,
-                                 np.ones_like(after_thicken_image) * SmartBruteForce.PASSABLE))
+        return Region(  np.array((255-after_thicken_image)/255 * SmartBruteForce.PASSABLE, dtype=int))
 
     def thicken_boundaries(self, image):
         img = np.array(image)
@@ -211,7 +214,9 @@ class Region():
 
     def show_polygonized(self):
         for polygon in self.polygonize():
-            plt.plot(*polygon.exterior.xy)
+            show_polygon(polygon)
+        # for polygon in self.polygonize():
+        #     plt.plot(*polygon.interiors.xy)
         plt.show()
 
     def extract_polygons_geometries_from_img(self, img, coutours_level=0.0001, poly_simplification_level=1.0):
@@ -237,6 +242,7 @@ class Region():
         return False
 
 
+
 class PolygonWithInnerings():
     def __init__(self, outer_polygon, innering_polygons) -> None:
         super().__init__()
@@ -252,9 +258,14 @@ class PolygonWithInnerings():
             index_polygon_innerings[i] = []
 
         for inner_polygon in self.innering_polygons:
-            if len(split(inner_polygon, line)) == 2:
+            if len(split(inner_polygon, line)) >= 2:
                 for i,outer_polygon_part in enumerate(outer_polygon_parts):
-                    outer_polygon_parts[i] = outer_polygon_part.difference(inner_polygon)
+                    #TODO -> fix multipolygon hack
+                    diff = outer_polygon_part.difference(inner_polygon)
+                    if isinstance(diff, MultiPolygon):
+                        outer_polygon_parts[i] = diff[0]
+                    else:
+                        outer_polygon_parts[i] = diff
             else:
                 for i, outer_polygon_part in enumerate(outer_polygon_parts):
                     if outer_polygon_part.contains(inner_polygon):
