@@ -42,12 +42,14 @@ class SmartBruteForce:
 
         boundary_region = self.create_boundary_region(after_thicken_image, before_thicken_image)
         passable_region, impassable_regions = self.generate_regions(after_thicken_image, plot=plot)
-        impassable_regions.append(boundary_region)
 
         if plot:
             boundary_region.show_area()
 
-        return passable_region.polygonize(), flatten_list([region.polygonize() for region in impassable_regions])
+        impassable_regions_polygonized = [region.polygonize() for region in impassable_regions]
+        impassable_regions_polygonized.append(boundary_region.polygonize_empty_inside())
+
+        return passable_region.polygonize(), flatten_list(impassable_regions_polygonized)
 
     def create_boundary_region(self, after_thicken_image, before_thicken_image):
         return Region(  np.array((255-after_thicken_image)/255 * SmartBruteForce.PASSABLE, dtype=int))
@@ -175,7 +177,7 @@ class Region():
         plt.imshow(self.get_boundary(), cmap='gray')
         plt.show()
 
-    def polygonize(self):
+    def polygonize_empty_inside(self):
         self.check_passable_area_does_not_touch_boundary()
 
         polygons = self.extract_polygons_geometries_from_img(self.get_area())
@@ -189,6 +191,11 @@ class Region():
             self.split_till_no_innerings_left(polygon_with_innerings, polygons)
 
         return polygons
+
+    def polygonize(self):
+        self.check_passable_area_does_not_touch_boundary()
+        return self.extract_polygons_geometries_from_img(self.get_area())
+
 
     def split_till_no_innerings_left(self, polygon_with_innerings, final_polygons):
         if len(polygon_with_innerings.innering_polygons) == 0:
