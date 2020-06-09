@@ -15,6 +15,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
+    map_file_name = request.args.get('map_file_name')
     robot_diameter = int(request.args.get('robot_diameter'))
     robot_starting_x = int(request.args.get('robot_starting_x'))
     robot_starting_y = int(request.args.get('robot_starting_y'))
@@ -23,7 +24,33 @@ def index():
 
     start = timeit.default_timer()
 
-    # map_pgm = get_files(URL)
+    map_pgm = get_files(os.environ.get('database-url') + map_file_name)
+    bgf = BarrierGenerationFacade()
+
+    barriers = bgf.generate_barriers(map_pgm, robot_diameter, robot_starting_position)
+
+    all_polygons = []
+    for polygon in barriers:
+        polygon_s = []
+        for vertex in list(polygon.exterior.coords):
+            polygon_s.append('({},{})'.format(int(round(vertex[0])), int(round(vertex[1]))))
+        all_polygons.append('[{}]'.format(','.join(polygon_s)))
+    all_polygons = '[{}]'.format(','.join(all_polygons))
+
+    stop = timeit.default_timer()
+
+    return all_polygons
+
+@app.route('/dummy_map')
+def index2():
+    robot_diameter = int(request.args.get('robot_diameter'))
+    robot_starting_x = int(request.args.get('robot_starting_x'))
+    robot_starting_y = int(request.args.get('robot_starting_y'))
+
+    robot_starting_position = (robot_starting_x, robot_starting_y)
+
+    start = timeit.default_timer()
+
     path = 'test_resources/maps/apartment.pgm'
 
     map_pgm = Image.open(path, 'r')
@@ -32,14 +59,11 @@ def index():
     barriers = bgf.generate_barriers(map_pgm, robot_diameter, robot_starting_position)
 
     all_polygons = []
-    for generated_polygons in barriers:
-        generated_polygons_s = []
-        for polygon in generated_polygons:
-            polygon_s = []
-            for vertex in list(polygon.exterior.coords):
-                polygon_s.append('({},{})'.format(vertex[0], vertex[1]))
-            generated_polygons_s.append('[{}]'.format(','.join(polygon_s)))
-        all_polygons.append(','.join(generated_polygons_s))
+    for polygon in barriers:
+        polygon_s = []
+        for vertex in list(polygon.exterior.coords):
+            polygon_s.append('({},{})'.format(int(round(vertex[0])), int(round(vertex[1]))))
+        all_polygons.append('[{}]'.format(','.join(polygon_s)))
     all_polygons = '[{}]'.format(','.join(all_polygons))
 
     stop = timeit.default_timer()
@@ -47,19 +71,32 @@ def index():
     return all_polygons
 
 
-@app.route('/performance_tests')
+@app.route('/performance_test')
 def performance_test():
-    test_map_name = request.args.get('test_map_name')
+    robot_starting_position = (75, 250)
 
-    performance_test_result = {'accuracy': 0.96, 'test_map_name': test_map_name, 'passed': True, 'time': 0.1}
+    start = timeit.default_timer()
+
+    path = 'test_resources/maps/apartment.pgm'
+
+    map_pgm = Image.open(path, 'r')
+    bgf = BarrierGenerationFacade()
+
+    barriers = bgf.generate_barriers(map_pgm, 10, robot_starting_position)
+    stop = timeit.default_timer()
+
+    performance_test_result = {'apartment': 'apartment.pgm', 'passed': True, 'time': stop-start}
     return jsonify(performance_test_result)
 
 
 @app.route('/map_request_test')
 def map_request_test():
-    database_config = {}
-    map_loader = MapLoader(database_config)
-    performance_test_result = {'time': 0.1, 'passed': True, 'db': os.environ.get('database-url')}
+    map_file_name = request.args.get('map_file_name')
+    start = timeit.default_timer()
+    map_pgm = get_files(os.path.join(os.environ.get('database-url'), map_file_name))
+
+    stop = timeit.default_timer()
+    performance_test_result = {'time': stop-start, 'passed': True, 'db': os.environ.get('database-url')}
     return jsonify(performance_test_result)
 
 
