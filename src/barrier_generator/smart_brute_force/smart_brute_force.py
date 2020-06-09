@@ -49,6 +49,7 @@ class SmartBruteForce:
         impassable_regions_polygonized = [region.polygonize() for region in impassable_regions]
         impassable_regions_polygonized.append(boundary_region.polygonize_empty_inside())
 
+
         return passable_region.polygonize(), flatten_list(impassable_regions_polygonized)
 
     def create_boundary_region(self, after_thicken_image, before_thicken_image):

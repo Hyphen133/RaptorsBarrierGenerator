@@ -137,5 +137,20 @@ Final merging collects all regions that are not the one in which robot can move 
 The output of the module is the polygonized boundaries of all separate regions that cannot be accessed based on given starting point position.
 
 
+## Developers guide
 
+### Using algorithm API
+The facade is defined link:../src/api/barrier_generation_controller[here]
 
+Example use case can be seen in link:../tests/test_barrier_generation.py[test_api() test]
+
+### Tuneable parameters
+WARNING: Solution have parameters which effect working of the algorithm (some may need to be parameterized)
+
+Here is list of most important parameters:
+
+* *MapProcessing : black_pixel_threshold* - defines when pixel is turned into passable or inpassabl area (after blurring)
+
+Assumption parameters (should not be change)
+
+* * *SmartBruteForce : NOT_CHECKED,PASSABLE,BLOCKED,BOUNDARY* - values for pixels represeting target state

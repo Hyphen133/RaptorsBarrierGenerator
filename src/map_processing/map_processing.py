@@ -5,6 +5,11 @@ from PIL import Image, ImageFilter
 
 
 class MapProcessing():
+
+    def __init__(self, black_pixel_threshold = 250) -> None:
+        super().__init__()
+        self.black_pixel_threshold = black_pixel_threshold
+
     def extract_contours(self, map_image):
         arr = np.array(map_image)
         image = Image.fromarray(arr)
@@ -15,8 +20,9 @@ class MapProcessing():
         arr = np.array(image)
 
         #Remove any blur to black values
-        arr[arr < 250] = 0
-        arr[arr >= 250] = 255
+        black_pixel_threshold = 250
+        arr[arr < black_pixel_threshold] = 0
+        arr[arr >= black_pixel_threshold] = 255
 
         #Countour side effect
         arr2 = np.ones_like(arr)*255
