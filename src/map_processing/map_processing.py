@@ -1,6 +1,7 @@
 
 import matplotlib.pyplot as plt
 import numpy as np
+import os
 from PIL import Image, ImageFilter
 
 
@@ -8,7 +9,7 @@ class MapProcessing():
 
     def __init__(self, black_pixel_threshold = 250) -> None:
         super().__init__()
-        self.black_pixel_threshold = black_pixel_threshold
+        self.black_pixel_threshold = int(os.environ.get('black-pixel-threshold'))
 
     def extract_contours(self, map_image):
         arr = np.array(map_image)

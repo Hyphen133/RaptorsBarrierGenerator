@@ -96,7 +96,7 @@ def map_request_test():
     map_pgm = get_files(os.path.join(os.environ.get('database-url'), map_file_name))
 
     stop = timeit.default_timer()
-    performance_test_result = {'time': stop-start, 'passed': True, 'db': os.environ.get('database-url')}
+    performance_test_result = {'time': stop-start, 'passed': True}
     return jsonify(performance_test_result)
 
 
