@@ -79,8 +79,20 @@ The *output* consists of single region that robot can pass and multple impassabl
 
 NOTE: Single region can be represented by multiple polygons cause of innerings
 
+=== Technical details
 
-== Vectorized Analysis Algorith,
+WARNING: This is coupled with current implementation (may be outdated)
+
+Algorithm steps
+
+* Thicken boundaries - so that every boundary gets additional area, which is the one that robot won't be able to enter (too close to boundary)
+* Generation of regions
+* Generate passable region, at which robot started and the robot can move through (on by on untill no possible regions), then poygonizes them in final solution.
+
+
+
+
+== Vectorized Analysis Algorithm
 
 NOTE: This is alternative to Smart Brute Force with better performance
 
