@@ -9,6 +9,9 @@ from flask import jsonify, request
 from src.map_processing.map_loading import MapLoader
 from dotenv import load_dotenv
 from urllib.parse import urljoin
+import numpy as np
+from io import BytesIO
+import yaml
 load_dotenv()
 
 app = Flask(__name__)
@@ -16,16 +19,31 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
+    map_folder_name = request.args.get('map_folder_name')
     map_file_name = request.args.get('map_file_name')
     robot_diameter = int(request.args.get('robot_diameter'))
-    robot_starting_x = int(request.args.get('robot_starting_x'))
-    robot_starting_y = int(request.args.get('robot_starting_y'))
+    # robot_starting_x = int(request.args.get('robot_starting_x'))
+    # robot_starting_y = int(request.args.get('robot_starting_y'))
 
-    robot_starting_position = (robot_starting_x, robot_starting_y)
+
 
     start = timeit.default_timer()
 
-    map_pgm = get_files(os.environ.get('database-url') + map_file_name)
+    file_url = urljoin(os.environ.get('database-url'), ''.join([map_folder_name,'/', map_file_name]))
+
+    map_pgm = get_files(''.join([file_url, '.pgm']))
+    map_pgm = Image.open(BytesIO(map_pgm))
+    map_yaml = get_files(''.join([file_url, '.yaml']))
+
+    map_yaml = yaml.load(map_yaml, Loader=yaml.FullLoader)
+    print(np.array(map_pgm).size)
+
+
+
+
+    robot_starting_position = (int(abs(map_yaml['origin'][0])), int(abs(map_yaml['origin'][1])))
+    robot_starting_position = (2000,2000)
+    
     bgf = BarrierGenerationFacade()
 
     barriers = bgf.generate_barriers(map_pgm, robot_diameter, robot_starting_position)
@@ -100,6 +118,7 @@ def map_request_test():
 
     map_pgm = get_files(''.join([file_url, '.pgm']))
     map_yaml = get_files(''.join([file_url, '.yaml']))
+
 
     stop = timeit.default_timer()
     performance_test_result = {'time': stop-start, 'passed': True}
