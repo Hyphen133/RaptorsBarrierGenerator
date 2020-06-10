@@ -8,6 +8,7 @@ from tests.resource_loader import ResourceLoader
 from flask import jsonify, request
 from src.map_processing.map_loading import MapLoader
 from dotenv import load_dotenv
+from urllib.parse import urljoin
 load_dotenv()
 
 app = Flask(__name__)
@@ -91,9 +92,14 @@ def performance_test():
 
 @app.route('/map_request_test')
 def map_request_test():
+    map_folder_name = request.args.get('map_folder_name')
     map_file_name = request.args.get('map_file_name')
+
     start = timeit.default_timer()
-    map_pgm = get_files(os.path.join(os.environ.get('database-url'), map_file_name))
+    file_url = urljoin(os.environ.get('database-url'), ''.join([map_folder_name,'/', map_file_name]))
+
+    map_pgm = get_files(''.join([file_url, '.pgm']))
+    map_yaml = get_files(''.join([file_url, '.yaml']))
 
     stop = timeit.default_timer()
     performance_test_result = {'time': stop-start, 'passed': True}
