@@ -34,7 +34,8 @@ def index():
     # Calculate robot starting position using map size, resolution and starting position
     dimentions = np.array(map_pgm).shape
     resolution = map_yaml['resolution']
-    robot_starting_position = (dimentions[0] + map_yaml['origin'][0] * resolution, dimentions[1] + map_yaml['origin'][1] * resolution)
+    robot_starting_position = (dimentions[0] - map_yaml['origin'][0] * resolution, dimentions[1] + map_yaml['origin'][1] * resolution)
+    print(robot_starting_position)
     
     # Generate barrier polygons for selected map
     bgf = BarrierGenerationFacade()
