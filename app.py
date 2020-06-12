@@ -26,9 +26,10 @@ def index():
 
     # Combine database-url, folder name and map name to get full file url
     file_url = urljoin(os.environ.get('database-url'), ''.join([map_folder_name,'/', map_file_name]))
+    print(file_url)
 
     # Using file url fetch pgm and yaml files files 
-    map_pgm = get_pgm_from_path(''.join([file_url, '.pgm']))
+    map_pgm = get_pgm_from_path(''.join([file_url, '.png']))
     map_yaml = get_yaml_from_path(''.join([file_url, '.yaml']))
 
     # Calculate robot starting position using map size, resolution and starting position
@@ -47,14 +48,14 @@ def index():
 @app.route('/dummy_map')
 def index2():
     robot_diameter = int(request.args.get('robot_diameter'))
-    robot_starting_x = int(request.args.get('robot_starting_x'))
-    robot_starting_y = int(request.args.get('robot_starting_y'))
+    robot_starting_x = 400#int(request.args.get('robot_starting_x'))
+    robot_starting_y = 400#int(request.args.get('robot_starting_y'))
 
     robot_starting_position = (robot_starting_x, robot_starting_y)
 
     start = timeit.default_timer()
 
-    map_pgm = Image.open('test_resources/maps/apartment.pgm', 'r')
+    map_pgm = Image.open('test_resources/maps/mappka.pgm', 'r')
     
     bgf = BarrierGenerationFacade()
     barriers = bgf.generate_barriers(map_pgm, robot_diameter, robot_starting_position)
