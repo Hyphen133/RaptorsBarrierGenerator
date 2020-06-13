@@ -133,9 +133,9 @@ def polygons_to_string(polygons):
     for polygon in polygons:
         polygon_s = []
         for vertex in list(polygon.exterior.coords):
-            polygon_s.append('({},{})'.format(int(round(vertex[0])), int(round(vertex[1]))))
-        all_polygons.append('[{}]'.format(','.join(polygon_s)))
-    all_polygons = '[{}]'.format(','.join(all_polygons))
+            polygon_s.append('{},{}'.format(int(round(vertex[0])), int(round(vertex[1]))))
+        all_polygons.append('{}'.format('|'.join(polygon_s)))
+    all_polygons = '{}'.format('p'.join(all_polygons))
     return all_polygons
 
 
