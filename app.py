@@ -12,13 +12,22 @@ from urllib.parse import urljoin
 import numpy as np
 from io import BytesIO
 import yaml
+
 load_dotenv()
 
 app = Flask(__name__)
 
+# SEZAMIE OTWÓRZ SIĘ
+@app.after_request
+def after_request(response):
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+    response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE')
+    return response
 
 @app.route('/')
 def index():
+    start = timeit.default_timer()
     # Get parameters
     map_folder_name = request.args.get('map_folder_name')
     map_file_name = request.args.get('map_file_name')
@@ -42,20 +51,23 @@ def index():
     bgf = BarrierGenerationFacade()
     barriers = bgf.generate_barriers(map_pgm, robot_diameter, robot_starting_position)
 
+    stop = timeit.default_timer()
     # Parse polygons to string and return
-    return polygons_to_string(barriers)
+    dummpy_map_test_result = {'map': map_file_name, 'polygons': polygons_to_string(barriers), 'time': stop-start}
+    return jsonify(dummpy_map_test_result)
 
 @app.route('/dummy_map')
 def index2():
     robot_diameter = int(request.args.get('robot_diameter'))
-    robot_starting_x = 400#int(request.args.get('robot_starting_x'))
-    robot_starting_y = 400#int(request.args.get('robot_starting_y'))
+    robot_starting_x = 75#400#int(request.args.get('robot_starting_x'))
+    robot_starting_y = 250#400#int(request.args.get('robot_starting_y'))
+    
 
     robot_starting_position = (robot_starting_x, robot_starting_y)
 
     start = timeit.default_timer()
 
-    map_pgm = Image.open('test_resources/maps/mappka.pgm', 'r')
+    map_pgm = Image.open('test_resources/maps/apartment.pgm', 'r')
     
     bgf = BarrierGenerationFacade()
     barriers = bgf.generate_barriers(map_pgm, robot_diameter, robot_starting_position)
