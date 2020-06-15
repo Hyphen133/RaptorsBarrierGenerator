@@ -59,22 +59,23 @@ def index():
 @app.route('/dummy_map')
 def index2():
     robot_diameter = int(request.args.get('robot_diameter'))
-    robot_starting_x = 75#400#int(request.args.get('robot_starting_x'))
-    robot_starting_y = 250#400#int(request.args.get('robot_starting_y'))
-    
-
-    robot_starting_position = (robot_starting_x, robot_starting_y)
 
     start = timeit.default_timer()
 
-    map_pgm = Image.open('test_resources/maps/apartment.pgm', 'r')
+    map_pgm = Image.open('test_resources/maps/mock_map.pgm', 'r')
+    map_yaml = yaml.load(open('test_resources/maps/mock_map.yaml', 'r'), Loader=yaml.FullLoader)
+
+    offset_x = map_pgm.size[0]//2
+    offset_y = map_pgm.size[1]//2
+    resolution = map_yaml['resolution']
+    robot_starting_position = (int(-map_yaml['origin'][0] + offset_x), int(map_yaml['origin'][1] + offset_y))
     
     bgf = BarrierGenerationFacade()
     barriers = bgf.generate_barriers(map_pgm, robot_diameter, robot_starting_position)
 
     stop = timeit.default_timer()
 
-    dummpy_map_test_result = {'map': 'apartment.pgm', 'polygons': polygons_to_string(barriers), 'time': stop-start}
+    dummpy_map_test_result = {'map': 'mock_map.pgm', 'polygons': polygons_to_string(barriers, offset_x, offset_y, resolution), 'time': stop-start}
     return jsonify(dummpy_map_test_result)
 
 
@@ -109,6 +110,7 @@ def map_request_test():
 
 
     stop = timeit.default_timer()
+    console.log("time:", stop-start)
     performance_test_result = {'time': stop-start, 'passed': True}
     return jsonify(performance_test_result)
 
@@ -128,12 +130,14 @@ def get_yaml_from_path(path):
     yaml_file = response.read()
     return yaml.load(yaml_file, Loader=yaml.FullLoader)
 
-def polygons_to_string(polygons):
+def polygons_to_string(polygons, offset_x, offset_y, resolution):
     all_polygons = []
     for polygon in polygons:
         polygon_s = []
         for vertex in list(polygon.exterior.coords):
-            polygon_s.append('{},{}'.format(int(round(vertex[0])), int(round(vertex[1]))))
+            x = -(vertex[0] - offset_y) * resolution
+            y = (vertex[1] - offset_x) * resolution
+            polygon_s.append('{},{}'.format(x,y))
         all_polygons.append('{}'.format('|'.join(polygon_s)))
     all_polygons = '{}'.format('p'.join(all_polygons))
     return all_polygons
