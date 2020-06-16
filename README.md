@@ -66,3 +66,7 @@ Findings on usage:
 Findings
 * It returns set of ndarray points for complex polygons
 * At less complex polygons (high level f.ex 20) it retursn Polygon class
+
+
+
+<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/pl/"><img alt="Licencja Creative Commons" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/3.0/pl/88x31.png" /></a><br />Ten utwór jest dostępny na <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/pl/">licencji Creative Commons Uznanie autorstwa-Użycie niekomercyjne-Na tych samych warunkach 3.0 Polska</a>.
