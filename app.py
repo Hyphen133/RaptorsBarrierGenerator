@@ -79,20 +79,26 @@ def index2():
 
 @app.route('/performance_test')
 def performance_test():
-    robot_starting_position = (75, 250)
+    robot_diameter = 20
 
     start = timeit.default_timer()
 
-    path = 'test_resources/maps/apartment.pgm'
+    map_pgm = Image.open('test_resources/maps/mock_map.pgm', 'r')
+    map_yaml = yaml.load(open('test_resources/maps/mock_map.yaml', 'r'), Loader=yaml.FullLoader)
 
-    map_pgm = Image.open(path, 'r')
+    offset_x = map_pgm.size[0]//2
+    offset_y = map_pgm.size[1]//2
+    resolution = map_yaml['resolution']
+    robot_starting_position = (int(-map_yaml['origin'][0] + offset_x), int(map_yaml['origin'][1] + offset_y))
+    
     bgf = BarrierGenerationFacade()
+    barriers = bgf.generate_barriers(map_pgm, robot_diameter, robot_starting_position)
 
-    barriers = bgf.generate_barriers(map_pgm, 10, robot_starting_position)
     stop = timeit.default_timer()
 
-    performance_test_result = {'map': 'apartment.pgm', 'passed': True, 'time': stop-start}
-    return jsonify(performance_test_result)
+    dummpy_map_test_result = {'map': 'mock_map.pgm', 'polygons': polygons_to_string(barriers, offset_x, offset_y, resolution), 'time': stop-start}
+    return jsonify(dummpy_map_test_result)
+
 
 
 @app.route('/map_request_test')
