@@ -1,8 +1,8 @@
-from PIL import Image
 from flask import Flask
 import urllib.request
 import timeit
 import os
+from PIL import Image
 from src.api.barrier_generation_controller import BarrierGenerationFacade
 from tests.resource_loader import ResourceLoader
 from flask import jsonify, request
@@ -17,7 +17,6 @@ load_dotenv()
 
 app = Flask(__name__)
 
-# SEZAMIE OTWÓRZ SIĘ
 @app.after_request
 def after_request(response):
     response.headers.add('Access-Control-Allow-Origin', '*')
@@ -66,7 +65,7 @@ def index2():
     offset_x = map_pgm.size[0]//2
     offset_y = map_pgm.size[1]//2
     resolution = map_yaml['resolution']
-    robot_starting_position = (int(-map_yaml['origin'][0] + offset_x), int(map_yaml['origin'][1] + offset_y))
+    robot_starting_position = (int(map_yaml['origin'][1] + offset_y), int(map_yaml['origin'][0] + offset_x))
     
     bgf = BarrierGenerationFacade()
     barriers = bgf.generate_barriers(map_pgm, robot_diameter, robot_starting_position)
@@ -79,17 +78,17 @@ def index2():
 
 @app.route('/performance_test')
 def performance_test():
-    robot_diameter = 20
+    robot_diameter = 3
 
     start = timeit.default_timer()
 
-    map_pgm = Image.open('test_resources/maps/mock_map.pgm', 'r')
-    map_yaml = yaml.load(open('test_resources/maps/mock_map.yaml', 'r'), Loader=yaml.FullLoader)
+    map_pgm = Image.open('test_resources/maps/apartment.pgm', 'r')
+    map_yaml = yaml.load(open('test_resources/maps/apartment.yaml', 'r'), Loader=yaml.FullLoader)
 
     offset_x = map_pgm.size[0]//2
     offset_y = map_pgm.size[1]//2
     resolution = map_yaml['resolution']
-    robot_starting_position = (int(-map_yaml['origin'][0] + offset_x), int(map_yaml['origin'][1] + offset_y))
+    robot_starting_position = (int(map_yaml['origin'][1] + offset_y), int(map_yaml['origin'][0] + offset_x))
     
     bgf = BarrierGenerationFacade()
     barriers = bgf.generate_barriers(map_pgm, robot_diameter, robot_starting_position)
