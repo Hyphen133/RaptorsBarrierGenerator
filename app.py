@@ -42,10 +42,8 @@ def index():
     map_yaml = get_yaml_from_path(''.join([file_url, '.yaml']))
 
     # Calculate robot starting position using map size, resolution and starting position
-    dimentions = np.array(map_pgm).shape
     resolution = map_yaml['resolution']
-    robot_starting_position = (dimentions[0] - map_yaml['origin'][0] * resolution, dimentions[1] + map_yaml['origin'][1] * resolution)
-    print(robot_starting_position)
+    robot_starting_position = (int(-map_yaml['origin'][0] + offset_x), int(map_yaml['origin'][1] + offset_y))
     
     # Generate barrier polygons for selected map
     bgf = BarrierGenerationFacade()
@@ -53,7 +51,7 @@ def index():
 
     stop = timeit.default_timer()
     # Parse polygons to string and return
-    dummpy_map_test_result = {'map': map_file_name, 'polygons': polygons_to_string(barriers), 'time': stop-start}
+    dummpy_map_test_result = {'map': map_file_name, 'polygons': polygons_to_string(barriers, offset_x, offset_y, resolution), 'time': stop-start}
     return jsonify(dummpy_map_test_result)
 
 @app.route('/dummy_map')
